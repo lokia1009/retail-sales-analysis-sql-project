@@ -206,7 +206,7 @@ SELECT
 FROM 
 	hourly_sale
 GROUP BY 
-	shift
+	shift;
 ```
 
 ## Findings
