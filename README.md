@@ -5,14 +5,15 @@
 **Project Title**: Retail Sales Analysis  
 **Database**: `sql_project_p1`
 
-This project focuses on building and analyzing a structured retail sales database using SQL, involving data cleaning, exploratory analysis, and business queries to uncover insights on customer demographics, sales trends, and product performance. Advanced SQL techniques like window functions, aggregations and CTEs were used to support data-driven decisions in a retail context.
+This project involves building, cleaning, and analyzing a retail sales database using SQL to uncover insights on revenue, profitability, customer behavior, and category performance. It includes EDA, advanced business analysis using window functions and CTEs, and the development of an interactive Power BI dashboard to visualize key KPIs and support data-driven decision-making.
 
 ## Objectives
 
-1. **Set up a retail sales database**: Create and populate a retail sales database with the provided sales data.
-2. **Data Cleaning**: Identify and remove any records with missing or null values.
-3. **Exploratory Data Analysis (EDA)**: Perform basic exploratory data analysis to understand the dataset.
-4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
+1. **Set up a retail sales database**: Create, format, and populate a complete SQL database to store and manage retail sales data.
+2. **Data cleaning & preparation**: Fix data-type issues, remove duplicates, and handle missing values to ensure accuracy and consistency.
+3. **Exploratory Data Analysis (EDA)**: Analyze key dimensions, time attributes, and numerical measures to understand data patterns and distributions.
+4. **Business Analysis**: Use SQL (window functions, CTEs, aggregations) to uncover insights on revenue, profitability, customer behavior, category trends, and time-series patterns.
+5. **Build interactive visual dashboards:**: Develop optimized Power BI dashboards to visualize KPIs, trends, and segment-level performance for informed decision-making.
 
 ## Project Structure
 ### Database Setup
@@ -23,9 +24,9 @@ This project focuses on building and analyzing a structured retail sales databas
 
 
 ### 1. Data Cleansing
-- **1)Data Formatting**: Reformatted inconsistent date and time values into standard SQL formats.
-- **1)Duplicates Handling**: Identified and Removed the duplicate rows.
-- **1)NULLs Handling**: Identified NULL values in the dataset and delete the records with missing data.
+- **Data Formatting**: Reformatted inconsistent date and time values into standard SQL formats.
+- **Duplicates Handling**: Identified and Removed the duplicate rows.
+- **NULLs Handling**: Identified NULL values in the dataset and delete the records with missing data.
 
 ### 2. Exploratory Data Analysis
 
@@ -43,7 +44,7 @@ This project focuses on building and analyzing a structured retail sales databas
 - **Category Performance Analysis**: Assessed category performance by measuring month-over-month growth, identifying categories with the highest average selling price, and determining gender-wise category popularity.
 - **Time-Series & Seasonality Analysis**: Identified key time-series trends by analyzing day-type performance, week-over-week growth, and recurring seasonal revenue patterns.
 
-## 4. Visualization & Dashboards
+### 4. Visualization & Dashboards
 
 - **Retail Performance Dashboard**: Built an interactive Power BI dashboard using a matrix visual to present year, quarter, and month-level insights with smooth drill-down capabilities.
 - **Dynamic Filtering with Slicers**: Integrated slicers for snapshot day, category, gender, and age group to enable flexible, user-driven exploration of sales and profit data.
