@@ -15,214 +15,44 @@ This project focuses on building and analyzing a structured retail sales databas
 4. **Business Analysis**: Use SQL to answer specific business questions and derive insights from the sales data.
 
 ## Project Structure
+### Database Setup
 
-### 1. Database Setup
-
-- **Database Creation**: The project starts by creating a database named `sql_project_p1`.
+- **Database Creation**: The project starts by importing data from local CSV file and creating a database named `sql_project_p1`.
 - **Table Creation**: A table named `retail_sales` is created to store the sales data. The table structure includes columns for transaction ID, sale date, sale time, customer ID, gender, age, product category, quantity sold, price per unit, cost of goods sold (COGS), and total sale amount.
+- **Data Quality**: Some columns are in the wrong format (e.g., sale_date as text, sale_time as text), and the dataset contains duplicates and NULL values.
 
-```sql
-CREATE DATABASE sql_project_p1;
 
-CREATE TABLE retail_sales
-(
-    transactions_id INT PRIMARY KEY,
-    sale_date DATE,	
-    sale_time TIME,
-    customer_id INT,	
-    gender VARCHAR(10),
-    age INT,
-    category VARCHAR(35),
-    quantity INT,
-    price_per_unit FLOAT,	
-    cogs FLOAT,
-    total_sale FLOAT
-);
-```
+### 1. Data Cleansing
+- **1)Data Formatting**: Reformatted inconsistent date and time values into standard SQL formats.
+- **1)Duplicates Handling**: Identified and Removed the duplicate rows.
+- **1)NULLs Handling**: Identified NULL values in the dataset and delete the records with missing data.
 
-### 2. Data Exploration & Cleaning
+### 2. Exploratory Data Analysis
 
-- **Record Count**: Determine the total number of records in the dataset.
-- **Customer Count**: Find out how many unique customers are in the dataset.
-- **Category Count**: Identify all unique product categories in the dataset.
-- **Null Value Check**: Check for any null values in the dataset and delete records with missing data.
+- **Dimension Exploration**: Analyzed key categorical dimensions such as gender, customer IDs, and product categories using distinct value checks.
+- **Date & Time Exploration**: Explored sales timeline by identifying date ranges and time distribution patterns.
+- **Measure Column Exploration**: Evaluated numerical metrics like quantity, price, COGS, and total sales for basic statistical insights.
+- **Magnitude Analysis**: Assessed overall performance through customer counts, category-wise revenue, and sales distribution.
+- **Ranking Analysis**: Ranked customers and weekly sales to identify top and bottom performers.
 
-```sql
-SELECT COUNT(*) FROM retail_sales;
-SELECT COUNT(DISTINCT customer_id) FROM retail_sales;
-SELECT DISTINCT category FROM retail_sales;
+### 3. Advanced Data Analysis
 
-SELECT * FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
+- **Sales & Revenue Analysis**: Analyzed overall sales performance through monthly revenue summaries, peak sales days and hours, revenue trends, and top customer contributions to understand key drivers of business growth.
+- **Profitability & Cost Analysis**: Evaluated business profitability by analyzing gross profit and profit margins across categories, detecting loss-making transactions, and tracking revenue trends using rolling 7-day calculations.
+- **Customer Behavior Analysis**: Examined customer purchasing patterns by identifying high-value customers, analyzing gender- and age-based spending, performing RFM segmentation, and classifying repeat vs. one-time buyers.
+- **Category Performance Analysis**: Assessed category performance by measuring month-over-month growth, identifying categories with the highest average selling price, and determining gender-wise category popularity.
+- **Time-Series & Seasonality Analysis**: Identified key time-series trends by analyzing day-type performance, week-over-week growth, and recurring seasonal revenue patterns.
 
-DELETE FROM retail_sales
-WHERE 
-    sale_date IS NULL OR sale_time IS NULL OR customer_id IS NULL OR 
-    gender IS NULL OR age IS NULL OR category IS NULL OR 
-    quantity IS NULL OR price_per_unit IS NULL OR cogs IS NULL;
-```
+## 4. Visualization & Dashboards
 
-### 3. Data Analysis & Findings
-
-The following SQL queries were developed to answer specific business questions:
-
-1. **Write a SQL query to retrieve all columns for sales made on '2022-11-05**:
-```sql
-SELECT * 
-FROM 
-	retail_sales
-WHERE 
-	sale_date = '2022-11-05';
-```
-
-2. **Write a SQL query to retrieve all transactions where the category is 'Clothing' and the quantity sold is more than 4 in the month of Nov-2022**:
-```sql
-SELECT 
-	transactions_id
-FROM 
-	retail_sales
-WHERE 
-	category='Clothing' AND 
-	quantity >=4  AND
-	sale_date = STR_TO_DATE('Nov-2022', '%b-%Y');
-```
-
-3. **Write a SQL query to calculate the total sales (total_sale) for each category.**:
-```sql
-SELECT 
-	category,
-	SUM(total_sale) AS total_sale
-FROM
-	retail_sales
-GROUP BY 
-	category;
-```
-
-4. **Write a SQL query to find the average age of customers who purchased items from the 'Beauty' category.**:
-```sql
-SELECT 
-	ROUND(AVG(age),2) as avg_age
-FROM 
-	retail_sales
-WHERE 
-	category = 'Beauty';
-```
-
-5. **Write a SQL query to find all transactions where the total_sale is greater than 1000.**:
-```sql
-SELECT 
-	transactions_id
-FROM 
-	retail_sales
-WHERE 
-	total_sale > 1000;
-```
-
-6. **Write a SQL query to find the total number of transactions (transaction_id) made by each gender in each category.**:
-```sql
-SELECT 
-	category,
-	gender,
-	COUNT(transactions_id) AS count
-FROM 
-	retail_sales 
-GROUP BY
-	category,
-	gender
-ORDER BY 
-	category,
-	gender;
-```
-
-7. **Write a SQL query to calculate the average sale for each month. Find out best selling month in each year**:
-```sql
-SELECT 
-	year,
-	month,
-	avg_sale
-FROM
-	(SELECT
-		EXTRACT(YEAR FROM sale_date)AS year,
-		EXTRACT(MONTH FROM sale_date) AS month,
-		ROUND(AVG(total_sale),2) AS avg_sale,
-		DENSE_RANK() OVER(PARTITION BY EXTRACT(YEAR FROM sale_date) ORDER BY AVG(total_sale) DESC) AS rk
-	FROM
-		retail_sales
-	GROUP BY 
-		EXTRACT(YEAR FROM sale_date),
-		EXTRACT(MONTH FROM sale_date)) AS t1
-WHERE 
-	rk=1;
-```
-
-8. **Write a SQL query to find the top 5 customers based on the highest total sales **:
-```sql
-SELECT 
-	customer_id,
-	total_sale
-FROM
-	(SELECT 
-		customer_id,
-		SUM(total_sale) as total_sale,
-		DENSE_RANK() OVER(ORDER BY SUM(total_sale) DESC) AS rk
-	FROM
-		retail_sales
-	GROUP BY 
-		customer_id) AS t1
-WHERE 
-	rk <=5;
-```
-
-9. **Write a SQL query to find the number of unique customers who purchased items from each category.**:
-```sql
-SELECT 
-	category,
-	COUNT(DISTINCT customer_id) AS no_of_customers
-FROM 
-	retail_sales
-GROUP BY
-	category;
-```
-
-10. **Write a SQL query to create each shift and number of orders (Example Morning <12, Afternoon Between 12 & 17, Evening >17)**:
-```sql
-WITH hourly_sale
-AS
-(
-SELECT *,
-    CASE
-        WHEN EXTRACT(HOUR FROM sale_time) < 12 THEN 'Morning'
-        WHEN EXTRACT(HOUR FROM sale_time) BETWEEN 12 AND 17 THEN 'Afternoon'
-        ELSE 'Evening'
-    END as shift
-FROM retail_sales
-)
-SELECT 
-    shift,
-    COUNT(*) as total_orders    
-FROM 
-	hourly_sale
-GROUP BY 
-	shift;
-```
-
-## Findings
-
-- **Customer Demographics**: The dataset includes customers from various age groups, with sales distributed across different categories such as Clothing and Beauty.
-- **High-Value Transactions**: Several transactions had a total sale amount greater than 1000, indicating premium purchases.
-- **Sales Trends**: Monthly analysis shows variations in sales, helping identify peak seasons.
-- **Customer Insights**: The analysis identifies the top-spending customers and the most popular product categories.
-
-## Reports
-
-- **Sales Summary**: A detailed report summarizing total sales, customer demographics, and category performance.
-- **Trend Analysis**: Insights into sales trends across different months and shifts.
-- **Customer Insights**: Reports on top customers and unique customer counts per category.
+- **Retail Performance Dashboard**: Built an interactive Power BI dashboard using a matrix visual to present year, quarter, and month-level insights with smooth drill-down capabilities.
+- **Dynamic Filtering with Slicers**: Integrated slicers for snapshot day, category, gender, and age group to enable flexible, user-driven exploration of sales and profit data.
+- **Category & Demographic Insights**: Displayed detailed metrics—orders placed, quantity sold, revenue, profit, and loss—segmented by category and gender within a single, optimized matrix view.
+- **Time-Based Analysis View**: Structured visuals to reveal sales patterns across years, quarters, and months, helping identify seasonality and demand cycles.
+- **Dashboard Optimization Techniques**: Improved performance by using only slicers and matrix visuals, avoiding heavy or complex visuals, reducing page load time, minimizing visual clutter, and ensuring faster rendering for a seamless user experience.
+- **Comprehensive KPI Presentation**: Presented all essential KPIs in a single consolidated matrix for clearer comparison and efficient decision-making.
 
 ## Conclusion
 
-This project demonstrates end-to-end SQL skills, including database setup, data cleaning, and analytical querying to uncover insights on customer behavior, sales trends, and product performance. It highlights the use of SQL techniques such as window functions and aggregations to support data-driven decision-making in a retail environment.
+This project provides a clear end-to-end analysis of retail sales data using SQL and Power BI, turning raw data into meaningful insights on sales trends, customer behavior, profitability, and category performance. The final dashboard delivers an easy, interactive way to understand business performance and support better decision-making.
 
